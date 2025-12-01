@@ -1,0 +1,247 @@
+---
+alwaysApply: true
+---
+
+# Contexto do Projeto - Drinks da Giovana
+
+## Visão Geral
+
+Aplicativo Android para registrar e organizar os drinks favoritos da Giovana. O app permite cadastrar, visualizar, editar e excluir drinks com informações detalhadas sobre cada receita.
+
+## Tecnologias Escolhidas
+
+- **Framework**: React Native com Expo
+- **Linguagem**: TypeScript
+- **Roteamento**: Expo Router
+- **Armazenamento**: AsyncStorage (local, por enquanto)
+- **Testes**: Jest + React Native Testing Library
+- **Estrutura de Testes**: Pasta separada (`__tests__/`)
+
+## Requisitos Funcionais
+
+### Funcionalidades Principais
+
+1. **Splash Screen**
+   - Exibe foto da Giovana
+   - Aparece por 2-3 segundos ao abrir o app
+   - Navega automaticamente para a lista de drinks
+
+2. **Lista de Drinks**
+   - Exibe todos os drinks cadastrados em cards
+   - Cada card mostra: nome, nota (estrelas), data, miniatura da foto
+   - Permite ordenar/filtrar por: melhor nota, mais recente, todos
+   - Botão flutuante (FAB) para adicionar novo drink
+   - Se vazia, mostra mensagem "Nenhum drink cadastrado"
+
+3. **Detalhes do Drink**
+   - Exibe todas as informações do drink
+   - Foto (se houver)
+   - Nota com estrelas
+   - Data de experimentação
+   - Lista completa de ingredientes
+   - Modo de preparo
+   - Botões: Editar e Excluir
+
+4. **Formulário (Adicionar/Editar)**
+   - Campos:
+     - Nome do drink (obrigatório)
+     - Nota de 1 a 5 (obrigatório, com estrelas clicáveis)
+     - Data de experimentação (padrão: hoje)
+     - Lista de ingredientes (nome, quantidade, unidade)
+     - Modo de preparo (texto multilinha)
+     - Foto (opcional)
+   - Validação de campos obrigatórios
+   - Confirmação ao cancelar se houver alterações
+
+5. **Dados Iniciais**
+   - App vem com drinks de exemplo pré-cadastrados
+   - Permite adicionar, editar e excluir drinks
+
+## Modelo de Dados
+
+### Drink
+```typescript
+{
+  id: string (identificador único)
+  name: string (nome do drink)
+  rating: number (1 a 5)
+  date: Date (data de experimentação)
+  ingredients: Ingredient[] (lista de ingredientes)
+  instructions: string (modo de preparo)
+  photo?: string (URI/caminho da foto, opcional)
+}
+```
+
+### Ingredient
+```typescript
+{
+  name: string (nome do ingrediente)
+  quantity: number (quantidade)
+  unit: string (ml, oz, colher, fatia, unidade, etc.)
+}
+```
+
+## Arquitetura
+
+### Estrutura de Pastas
+
+```
+drinks-da-giovana/
+├── app/                          # Telas (Expo Router)
+│   ├── (tabs)/
+│   │   └── index.tsx            # Tela principal (lista)
+│   ├── drink/
+│   │   ├── [id].tsx             # Detalhes do drink
+│   │   └── new.tsx              # Adicionar novo drink
+│   └── _layout.tsx              # Layout geral
+│
+├── components/                    # Componentes reutilizáveis
+│   ├── DrinkCard.tsx
+│   ├── StarRating.tsx
+│   ├── IngredientInput.tsx
+│   └── Button.tsx
+│
+├── data/                         # Camada de dados
+│   ├── repository.ts            # Salvar/carregar drinks
+│   └── initialData.ts           # Dados de exemplo
+│
+├── model/                        # Tipos TypeScript
+│   ├── Drink.ts
+│   └── Ingredient.ts
+│
+├── hooks/                        # Hooks customizados
+│   ├── useDrinks.ts
+│   └── useDrinkForm.ts
+│
+├── utils/                        # Funções auxiliares
+│   ├── storage.ts
+│   └── dateFormat.ts
+│
+├── constants/                    # Constantes
+│   └── Colors.ts
+│
+├── assets/                       # Recursos estáticos
+│   ├── images/
+│   │   └── giovana-splash.jpg
+│   └── fonts/
+│
+└── __tests__/                    # Testes (pasta separada)
+    ├── components/
+    ├── hooks/
+    ├── data/
+    ├── utils/
+    └── integration/
+```
+
+### Camadas
+
+1. **UI (Telas/Componentes)**: Interface visual
+2. **Lógica (Hooks/Contextos)**: Gerenciamento de estado e validações
+3. **Dados (Repositório)**: Persistência e recuperação de dados
+
+## Fluxo de Navegação
+
+```
+SPLASH (2-3s)
+  ↓
+LISTA DE DRINKS
+  ├─→ (toque no card) → DETALHES
+  │                      ├─→ (editar) → FORMULÁRIO (edição)
+  │                      └─→ (excluir) → LISTA
+  └─→ (FAB +) → FORMULÁRIO (adicionar) → LISTA
+```
+
+## Design e UX
+
+### Paleta de Cores
+- **Primária**: Rosa/Magenta suave (#E91E63 ou #C2185B)
+- **Secundária**: Roxo complementar (#9C27B0)
+- **Destaque**: Verde para ações positivas (#4CAF50)
+- **Alerta**: Vermelho para excluir (#F44336)
+- **Fundo**: Branco (#FFFFFF) ou cinza muito claro (#F5F5F5)
+- **Texto**: Cinza escuro (#212121) para títulos, cinza médio (#757575) para secundários
+
+### Princípios de UX
+- Botões claros e bem identificados
+- Textos curtos e diretos
+- Nada muito técnico
+- Interface moderna, simples e bonita
+- User-friendly acima de tudo
+
+## Armazenamento
+
+### Estratégia Atual
+- **AsyncStorage** (armazenamento local no dispositivo)
+- Dados persistem entre sessões do app
+- Funciona offline
+
+### Estratégia Futura (se necessário)
+- Back-end com API REST
+- Sincronização entre dispositivos
+- Backup na nuvem
+- Arquitetura preparada para evolução (camada de dados isolada)
+
+## Testes
+
+### Estrutura
+- Pasta separada: `__tests__/`
+- Organização espelhando a estrutura do código
+
+### Prioridades
+- **Alta**: Validações, persistência de dados, ordenação/filtros
+- **Média**: Renderização de componentes, CRUD de drinks
+- **Baixa**: Testes E2E, performance
+
+## Decisões de Design
+
+1. **Edição e Exclusão**: Sempre permitidas
+2. **Detalhes**: Tela separada ao clicar no card
+3. **Dados Iniciais**: App vem com exemplos pré-cadastrados
+4. **Testes**: Pasta separada (Opção 2)
+5. **Armazenamento**: Local primeiro, evoluir para API depois se necessário
+
+## Status Atual do Projeto
+
+### ✅ Implementação Completa - App Funcionando
+
+**Data**: Dezembro 2024
+**Status**: MVP completo e testado no dispositivo físico via Expo Go
+
+**O que está funcionando**:
+- ✅ Todas as telas implementadas (Splash, Lista, Detalhes, Formulários)
+- ✅ CRUD completo (Criar, Ler, Atualizar, Deletar drinks)
+- ✅ Persistência local funcionando
+- ✅ Navegação completa entre telas
+- ✅ Validação de formulários
+- ✅ Upload e exibição de fotos
+- ✅ Ordenação de drinks (Todos, Melhores, Recentes)
+- ✅ Dados iniciais pré-cadastrados (3 drinks de exemplo)
+
+**Arquivos criados**:
+- Modelos: `model/Drink.ts`, `model/Ingredient.ts`
+- Constantes: `constants/Colors.ts`
+- Utilitários: `utils/dateFormat.ts`
+- Repositório: `data/repository.ts`, `data/initialData.ts`
+- Componentes: `components/StarRating.tsx`, `components/Button.tsx`, `components/DrinkCard.tsx`
+- Hooks: `hooks/useDrinks.ts`, `hooks/useDrinkForm.ts`
+- Telas: `app/_splash.tsx`, `app/(tabs)/index.tsx`, `app/drink/[id].tsx`, `app/drink/new.tsx`, `app/drink/edit.tsx`
+
+**Testado e validado**:
+- ✅ App inicia corretamente
+- ✅ Splash screen funciona
+- ✅ Lista carrega dados
+- ✅ Adicionar/editar/excluir funcionam
+- ✅ Persistência entre sessões funciona
+- ✅ Fotos funcionam
+
+**Próximos passos planejados** (ver `implementation-status.mdc` para detalhes):
+1. Melhorias de UI/UX
+2. Funcionalidades adicionais (busca, estatísticas, compartilhamento)
+3. Testes automatizados
+4. Preparação para produção
+5. Melhorias técnicas
+
+**Notas importantes**:
+- Jest versão corrigida para ~29.7.0 (compatível com Expo SDK 54)
+- Android SDK não necessário para testar no dispositivo físico com Expo Go
+- App funciona offline (armazenamento local)

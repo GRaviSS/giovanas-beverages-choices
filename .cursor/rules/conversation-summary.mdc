@@ -1,0 +1,121 @@
+---
+alwaysApply: true
+---
+
+# Resumo da Conversa e Decisões - Drinks da Giovana
+
+## Contexto Inicial
+
+O projeto começou com uma conversa onde o usuário (estatístico, iniciante em desenvolvimento mobile) queria criar um app Android para registrar drinks favoritos da Giovana.
+
+## Processo de Planejamento
+
+### Fase 1 - Refinamento do Escopo
+- ✅ Confirmado: Adicionar, editar e excluir drinks sempre permitidos
+- ✅ Confirmado: Tela de detalhes ao clicar no card
+- ✅ Confirmado: App inicia com drinks de exemplo pré-cadastrados
+
+### Fase 2 - Escolha de Tecnologia
+- ✅ Escolhido: React Native com Expo e TypeScript
+- **Razão**: Mais simples para iniciante, funciona bem no Cursor, permite evolução futura
+
+### Fase 3 - Arquitetura
+- ✅ Estrutura de pastas definida
+- ✅ Camadas: UI, Lógica (Hooks), Dados (Repositório)
+- ✅ Armazenamento: AsyncStorage (local) - pode evoluir para API depois
+
+### Fase 4 - Design das Telas
+- ✅ 4 telas principais: Splash, Lista, Detalhes, Formulário
+- ✅ Paleta de cores definida (rosa/magenta primário)
+- ✅ Fluxo de navegação mapeado
+
+### Fase 5 - Preparação
+- ✅ Node.js instalado manualmente pelo usuário
+- ✅ Projeto Expo criado com TypeScript
+- ✅ Todas as dependências instaladas
+- ✅ Estrutura de pastas criada
+- ✅ Configurações ajustadas (tsconfig, app.json, jest)
+
+### Fase 6 - Implementação (após "JUIZO")
+- ✅ Todos os modelos, componentes, hooks e telas implementados
+- ✅ App testado e funcionando no dispositivo físico
+
+## Decisões Importantes Durante Implementação
+
+1. **Navegação**: Expo Router com Stack navigation
+   - Rota inicial (`app/index.tsx`) redireciona para splash
+   - Splash navega automaticamente para lista após 2.5s
+
+2. **Estado**: Hooks customizados em vez de Context API
+   - `useDrinks` para gerenciar lista
+   - `useDrinkForm` para gerenciar formulário
+   - Decisão: Mais simples e direto para este caso
+
+3. **Validação**: Inline no hook useDrinkForm
+   - Valida nome (obrigatório) e nota (1-5)
+   - Mensagens de erro amigáveis
+
+4. **Fotos**: expo-image-picker
+   - Permissões solicitadas dinamicamente
+   - Opcional (não obrigatório)
+
+5. **Persistência**: AsyncStorage
+   - Serialização de Date para ISO string
+   - Dados iniciais carregados se storage vazio
+
+6. **Jest**: Versão corrigida para ~29.7.0
+   - Compatível com Expo SDK 54
+   - Instalado com --legacy-peer-deps
+
+## Problemas Encontrados e Resolvidos
+
+1. **Node.js não instalado**
+   - Resolvido: Usuário instalou manualmente
+   - Versão: v24.11.1
+
+2. **Jest versão incompatível**
+   - Problema: jest@30.2.0 não compatível com Expo SDK 54
+   - Resolvido: Downgrade para jest@~29.7.0
+
+3. **Android SDK**
+   - Situação: Não instalado
+   - Decisão: Não necessário para Expo Go no dispositivo físico
+   - Status: Funcionando perfeitamente sem SDK
+
+## Estado Final da Conversa
+
+**Última ação**: App testado e funcionando perfeitamente no dispositivo físico via Expo Go
+
+**Status**: MVP completo, todas as funcionalidades básicas implementadas e testadas
+
+**Próxima decisão pendente**: Usuário escolher qual melhoria implementar primeiro:
+1. Melhorias de UI/UX
+2. Funcionalidades adicionais
+3. Testes
+4. Preparação para produção
+5. Melhorias técnicas
+
+## Arquivos de Regras Criados
+
+1. `project-context.mdc` - Contexto completo do projeto (requisitos, arquitetura, design)
+2. `coding-conventions.mdc` - Convenções de código (estrutura, comentários, logs)
+3. `implementation-status.mdc` - Status detalhado da implementação
+4. `conversation-summary.mdc` - Este arquivo (resumo da conversa)
+
+## Como Continuar
+
+Quando o usuário voltar:
+1. Ler `implementation-status.mdc` para ver o que está feito
+2. Ler `project-context.mdc` para entender o projeto completo
+3. Ler `coding-conventions.mdc` para seguir padrões
+4. Perguntar ao usuário qual melhoria quer implementar primeiro
+5. Continuar de onde paramos (app funcionando, próximos passos planejados)
+
+## Notas Importantes para Futuro
+
+- Usuário é iniciante em desenvolvimento mobile, mas entende lógica
+- Prefere explicações didáticas e passo a passo
+- App é para uso pessoal (Giovana)
+- Foco em simplicidade e user-friendliness
+- Código deve estar bem comentado e com logs informativos
+- Seguir sempre as convenções definidas em `coding-conventions.mdc`

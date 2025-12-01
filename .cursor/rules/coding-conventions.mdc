@@ -1,0 +1,356 @@
+---
+alwaysApply: true
+---
+
+# Convenções de Código - Drinks da Giovana
+
+## Princípios Gerais
+
+1. **Código limpo e legível**: Priorize clareza sobre brevidade
+2. **Comentários úteis**: Explique o "porquê", não o "o quê"
+3. **Logs informativos**: Ajudam no debug e rastreamento
+4. **Estrutura consistente**: Siga os padrões estabelecidos
+5. **TypeScript rigoroso**: Use tipos explícitos, evite `any`
+
+## Estrutura de Arquivos
+
+### Componentes React
+
+```typescript
+// 1. Imports (React primeiro, depois bibliotecas, depois locais)
+import React from 'react';
+import { View, Text } from 'react-native';
+import { Drink } from '@/model/Drink';
+import { Button } from '@/components/Button';
+
+// 2. Tipos/Interfaces
+interface DrinkCardProps {
+  drink: Drink;
+  onPress: () => void;
+}
+
+// 3. Componente principal
+export const DrinkCard: React.FC<DrinkCardProps> = ({ drink, onPress }) => {
+  // 4. Hooks (useState, useEffect, etc.)
+  // 5. Funções auxiliares locais
+  // 6. Render
+  return (
+    // JSX
+  );
+};
+
+// 7. Estilos (se necessário, no final do arquivo)
+```
+
+### Hooks Customizados
+
+```typescript
+// 1. Imports
+import { useState, useEffect } from 'react';
+import { Drink } from '@/model/Drink';
+
+// 2. Tipos de retorno
+interface UseDrinksReturn {
+  drinks: Drink[];
+  addDrink: (drink: Drink) => Promise<void>;
+  // ...
+}
+
+// 3. Hook
+export const useDrinks = (): UseDrinksReturn => {
+  // Implementação
+};
+```
+
+### Funções Utilitárias
+
+```typescript
+// 1. Imports
+// 2. Tipos
+// 3. Função com JSDoc
+/**
+ * Formata uma data para exibição no formato brasileiro
+ * @param date - Data a ser formatada
+ * @returns String formatada (ex: "15/01/2025")
+ */
+export const formatDate = (date: Date): string => {
+  // Implementação
+};
+```
+
+## Comentários
+
+### Quando Comentar
+
+1. **Funções complexas**: Explique a lógica não óbvia
+2. **Decisões de design**: Por que foi feito assim
+3. **Workarounds**: Soluções temporárias ou não ideais
+4. **Algoritmos**: Lógica matemática ou de processamento
+
+### Formato de Comentários
+
+```typescript
+// ✅ BOM: Explica o porquê
+// Usamos AsyncStorage porque é simples e suficiente para dados locais
+// No futuro, podemos trocar por API sem mudar a interface
+
+// ❌ RUIM: Repete o código
+// Incrementa o contador
+counter++;
+
+// ✅ BOM: JSDoc para funções públicas
+/**
+ * Salva um drink no armazenamento local
+ * @param drink - Drink a ser salvo
+ * @throws Error se o drink não tiver ID válido
+ */
+export const saveDrink = async (drink: Drink): Promise<void> => {
+  // ...
+};
+
+// ✅ BOM: Comentário inline para lógica complexa
+// Ordena por nota (maior primeiro), depois por data (mais recente primeiro)
+const sorted = drinks.sort((a, b) => {
+  if (b.rating !== a.rating) return b.rating - a.rating;
+  return b.date.getTime() - a.date.getTime();
+});
+```
+
+## Logs
+
+### Quando Logar
+
+1. **Operações importantes**: Salvar, deletar, carregar dados
+2. **Erros**: Sempre logar erros com contexto
+3. **Debugging**: Estados intermediários em desenvolvimento
+4. **Navegação**: Mudanças de tela (opcional, útil para debug)
+
+### Formato de Logs
+
+```typescript
+// ✅ BOM: Log informativo com contexto
+console.log('[DrinkRepository] Salvando drink:', { id: drink.id, name: drink.name });
+console.log('[DrinkRepository] Drink salvo com sucesso');
+
+// ✅ BOM: Log de erro com stack trace
+console.error('[DrinkRepository] Erro ao salvar drink:', error);
+console.error('[DrinkRepository] Stack:', error.stack);
+
+// ✅ BOM: Log de debug (pode ser removido em produção)
+if (__DEV__) {
+  console.log('[useDrinks] Estado atualizado:', { count: drinks.length });
+}
+
+// ❌ RUIM: Log vago
+console.log('Erro');
+```
+
+### Convenção de Prefixos
+
+Use prefixos para identificar a origem do log:
+- `[ComponentName]` para componentes
+- `[HookName]` para hooks
+- `[RepositoryName]` para repositórios
+- `[UtilsFunctionName]` para utilitários
+
+## Nomenclatura
+
+### Arquivos
+- **Componentes**: PascalCase (`DrinkCard.tsx`)
+- **Hooks**: camelCase com prefixo `use` (`useDrinks.ts`)
+- **Utilitários**: camelCase (`dateFormat.ts`)
+- **Tipos/Modelos**: PascalCase (`Drink.ts`)
+- **Constantes**: PascalCase (`Colors.ts`)
+
+### Variáveis e Funções
+- **camelCase**: `drinkName`, `saveDrink`, `handlePress`
+- **Constantes**: UPPER_SNAKE_CASE: `MAX_RATING`, `DEFAULT_DATE_FORMAT`
+- **Tipos/Interfaces**: PascalCase: `Drink`, `DrinkCardProps`
+
+### Componentes
+- **PascalCase**: `DrinkCard`, `StarRating`
+- **Nomes descritivos**: Evite abreviações desnecessárias
+
+## TypeScript
+
+### Tipos Explícitos
+
+```typescript
+// ✅ BOM: Tipo explícito
+const drinks: Drink[] = [];
+
+// ❌ RUIM: Inferência quando não é óbvio
+const drinks = []; // Tipo: any[]
+
+// ✅ BOM: Interface clara
+interface DrinkFormData {
+  name: string;
+  rating: number;
+  date: Date;
+}
+
+// ✅ BOM: Type para união
+type Rating = 1 | 2 | 3 | 4 | 5;
+```
+
+### Evitar `any`
+
+```typescript
+// ❌ RUIM
+const data: any = await fetchData();
+
+// ✅ BOM
+const data: Drink[] = await fetchData();
+
+// ✅ BOM: Se realmente necessário, use `unknown` e valide
+const data: unknown = await fetchData();
+if (isDrinkArray(data)) {
+  // usar data como Drink[]
+}
+```
+
+## Estrutura de Componentes
+
+### Ordem de Elementos
+
+1. **Imports** (agrupados e ordenados)
+2. **Tipos/Interfaces**
+3. **Constantes locais**
+4. **Componente principal**
+   - Props destructuring
+   - Hooks (useState, useEffect, etc.)
+   - Funções auxiliares
+   - Handlers de eventos
+   - Render/return
+5. **Componentes auxiliares** (se houver)
+6. **Estilos** (StyleSheet ou styled-components)
+
+### Exemplo Completo
+
+```typescript
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Drink } from '@/model/Drink';
+import { StarRating } from '@/components/StarRating';
+
+interface DrinkCardProps {
+  drink: Drink;
+  onPress: () => void;
+}
+
+export const DrinkCard: React.FC<DrinkCardProps> = ({ drink, onPress }) => {
+  // Hooks
+  const [isPressed, setIsPressed] = useState(false);
+
+  // Handlers
+  const handlePress = () => {
+    console.log('[DrinkCard] Card pressionado:', drink.id);
+    onPress();
+  };
+
+  // Render
+  return (
+    <TouchableOpacity
+      style={[styles.card, isPressed && styles.cardPressed]}
+      onPress={handlePress}
+    >
+      <Text style={styles.name}>{drink.name}</Text>
+      <StarRating rating={drink.rating} />
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  card: {
+    // estilos
+  },
+  // ...
+});
+```
+
+## Tratamento de Erros
+
+### Sempre Trate Erros
+
+```typescript
+// ✅ BOM: Try-catch com log e tratamento
+export const saveDrink = async (drink: Drink): Promise<void> => {
+  try {
+    console.log('[DrinkRepository] Salvando drink:', drink.id);
+    await AsyncStorage.setItem(`drink_${drink.id}`, JSON.stringify(drink));
+    console.log('[DrinkRepository] Drink salvo com sucesso');
+  } catch (error) {
+    console.error('[DrinkRepository] Erro ao salvar drink:', error);
+    throw new Error('Falha ao salvar drink. Tente novamente.');
+  }
+};
+```
+
+### Mensagens de Erro Amigáveis
+
+```typescript
+// ✅ BOM: Erro com mensagem clara
+if (!drink.name.trim()) {
+  throw new Error('Nome do drink é obrigatório');
+}
+
+// ❌ RUIM: Erro técnico
+throw new Error('ValidationError: name is required');
+```
+
+## Performance
+
+### Boas Práticas
+
+1. **Memoização**: Use `React.memo`, `useMemo`, `useCallback` quando apropriado
+2. **Lazy Loading**: Carregue imagens e dados sob demanda
+3. **Evite Re-renders**: Não crie objetos/funções dentro do render
+
+```typescript
+// ✅ BOM: useCallback para handlers
+const handlePress = useCallback(() => {
+  onPress(drink.id);
+}, [drink.id, onPress]);
+
+// ❌ RUIM: Função criada a cada render
+const handlePress = () => onPress(drink.id);
+```
+
+## Testes
+
+### Estrutura de Testes
+
+```typescript
+// __tests__/components/DrinkCard.test.tsx
+import { render, fireEvent } from '@testing-library/react-native';
+import { DrinkCard } from '@/components/DrinkCard';
+
+describe('DrinkCard', () => {
+  it('deve renderizar o nome do drink', () => {
+    // Arrange
+    const drink = { /* ... */ };
+    
+    // Act
+    const { getByText } = render(<DrinkCard drink={drink} onPress={jest.fn()} />);
+    
+    // Assert
+    expect(getByText(drink.name)).toBeTruthy();
+  });
+});
+```
+
+### Convenções de Testes
+
+- **Arrange-Act-Assert**: Estrutura clara
+- **Nomes descritivos**: "deve fazer X quando Y"
+- **Um conceito por teste**: Testes focados
+
+## Checklist Antes de Commitar
+
+- [ ] Código segue as convenções de nomenclatura
+- [ ] Funções complexas têm comentários explicativos
+- [ ] Logs importantes estão presentes
+- [ ] Erros são tratados adequadamente
+- [ ] Tipos TypeScript estão explícitos (sem `any` desnecessário)
+- [ ] Código está formatado (Prettier/ESLint)
+- [ ] Testes passam (se houver)

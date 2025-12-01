@@ -1,0 +1,114 @@
+---
+alwaysApply: true
+---
+📘 Project Rules – Coding Guidelines
+
+(Regras de Código)
+
+1. Estrutura do Projeto
+
+Utilizar arquitetura clara (ex.: MVVM para Android).
+
+Separar responsabilidades em pastas:
+
+ui/ – telas e componentes visuais
+
+data/ – APIs, banco local e repositórios
+
+domain/ – lógica de negócio
+
+model/ – modelos de dados
+
+utils/ – utilidades e funções auxiliares
+
+Não misturar lógica de negócio com UI.
+
+2. Nomeação
+
+Código sempre em inglês.
+
+Classes → PascalCase
+
+Variáveis e funções → camelCase
+
+Constantes → UPPER_SNAKE_CASE
+
+Nomes devem ser claros e descritivos.
+
+3. Estilo de Código
+
+Código simples, limpo e modular.
+
+Cada função deve ter uma responsabilidade.
+
+Dividir funções grandes em funções menores.
+
+Evitar comentários desnecessários.
+
+Documentar funções importantes com docstrings.
+
+4. Git & Versionamento
+
+Commits pequenos e frequentes.
+
+Mensagens no formato:
+
+feat: add drink creation form
+
+fix: correct photo upload
+
+refactor: simplify repository logic
+
+Cada feature deve ter sua própria branch:
+
+feature/add-drink-screen
+
+5. Tratamento de Erros
+
+Nunca ignorar exceções.
+
+Mensagens amigáveis ao usuário.
+
+Log sem dados sensíveis.
+
+6. Arquitetura
+
+Evitar duplicação de código.
+
+Preferir composição a herança.
+
+Interfaces somente quando forem necessárias.
+
+Camadas dependem apenas da camada abaixo.
+
+7. Armazenamento / API
+
+Modelos tipados com campos claros.
+
+Validação antes de salvar dados.
+
+UI nunca acessa banco ou API diretamente.
+
+Repositórios como intermediários.
+
+8. Testabilidade
+
+Funções puras quando possível.
+
+Separar lógica da UI.
+
+Evitar estados globais descontrolados.
+
+9. Performance
+
+Sem processamento pesado na UI thread.
+
+Listas grandes usam lazy loading.
+
+Sem otimizações prematuras.
+
+10. Segurança
+
+Nada sensível no repositório: tokens, senhas, chaves.
+
+Usar variáveis de ambiente para credenciais.
