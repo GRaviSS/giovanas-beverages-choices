@@ -24,15 +24,19 @@ export default function SplashScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Aqui você pode adicionar a foto da Giovana quando tiver */}
+      {/* Foto da Giovana */}
       <View style={styles.imageContainer}>
-        <Text style={styles.emoji}>🍹</Text>
+        <Image
+          source={require('@/assets/images/giovana.jpeg')}
+          style={styles.image}
+          resizeMode="cover"
+        />
       </View>
       
       <Text style={styles.title}>Drinks da Giovana</Text>
       <Text style={styles.subtitle}>Seus drinks favoritos</Text>
       
-      <ActivityIndicator size="large" color={Colors.primary} style={styles.loader} />
+      <ActivityIndicator size="large" color={Colors.textLight} style={styles.loader} />
     </View>
   );
 }
@@ -45,16 +49,23 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   imageContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
     backgroundColor: Colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  emoji: {
-    fontSize: 80,
+  image: {
+    width: '100%',
+    height: '100%',
   },
   title: {
     fontSize: 32,

@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { Drink } from '@/model/Drink';
 import { useDrinks } from '@/hooks/useDrinks';
 import { DrinkCard } from '@/components/DrinkCard';
+import { DrinkCardSkeleton } from '@/components/DrinkCardSkeleton';
 import { Colors } from '@/constants/Colors';
 
 type SortOption = 'all' | 'rating' | 'recent';
@@ -107,9 +108,13 @@ export default function DrinksListScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-        <Text style={styles.loadingText}>Carregando drinks...</Text>
+      <View style={styles.container}>
+        {renderHeader()}
+        <View style={styles.listContent}>
+          {[1, 2, 3].map((i) => (
+            <DrinkCardSkeleton key={i} />
+          ))}
+        </View>
       </View>
     );
   }

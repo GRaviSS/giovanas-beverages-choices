@@ -14,8 +14,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { Drink, Ingredient } from '@/model/Drink';
 import { useDrinks } from '@/hooks/useDrinks';
 import { useDrinkForm } from '@/hooks/useDrinkForm';
+import { useToast } from '@/hooks/useToast';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/Button';
+import { Toast } from '@/components/Toast';
 import { Colors } from '@/constants/Colors';
 
 /**
@@ -32,6 +34,7 @@ export default function DrinkFormScreen() {
   const existingDrink = id ? drinks.find((d) => d.id === id) : undefined;
   
   const form = useDrinkForm(existingDrink);
+  const toast = useToast();
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientQuantity, setIngredientQuantity] = useState('');
   const [ingredientUnit, setIngredientUnit] = useState('ml');
@@ -115,7 +118,7 @@ export default function DrinkFormScreen() {
   // Salva o drink
   const handleSave = async () => {
     if (!form.validate()) {
-      Alert.alert('Campos obrigatórios', 'Preencha todos os campos obrigatórios');
+      toast.showError('Preencha todos os campos obrigatórios');
       return;
     }
 
@@ -125,15 +128,23 @@ export default function DrinkFormScreen() {
       if (isEditing) {
         console.log('[DrinkFormScreen] Atualizando drink:', drinkData.id);
         await updateExistingDrink(drinkData);
+        toast.showSuccess('Drink atualizado com sucesso!');
       } else {
         console.log('[DrinkFormScreen] Adicionando novo drink');
         await addNewDrink(drinkData);
+        toast.showSuccess('Drink adicionado com sucesso!');
       }
 
-      router.back();
+      // Aguarda um pouco para mostrar o toast antes de navegar
+      setTimeout(() => {
+        router.back();
+      }, 500);
     } catch (error) {
       console.error('[DrinkFormScreen] Erro ao salvar:', error);
-      Alert.alert('Erro', 'Não foi possível salvar o drink');
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('[DrinkFormScreen] Mensagem de erro:', errorMessage);
+      console.error('[DrinkFormScreen] Stack:', error instanceof Error ? error.stack : 'N/A');
+      toast.showError(`Não foi possível salvar o drink: ${errorMessage}`);
     }
   };
 
@@ -293,6 +304,14 @@ export default function DrinkFormScreen() {
           />
         </View>
       </View>
+
+      {/* Toast para feedback */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onHide={toast.hide}
+      />
     </ScrollView>
   );
 }

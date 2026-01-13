@@ -14,8 +14,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { Drink, Ingredient } from '@/model/Drink';
 import { useDrinks } from '@/hooks/useDrinks';
 import { useDrinkForm } from '@/hooks/useDrinkForm';
+import { useToast } from '@/hooks/useToast';
 import { StarRating } from '@/components/StarRating';
 import { Button } from '@/components/Button';
+import { Toast } from '@/components/Toast';
 import { Colors } from '@/constants/Colors';
 
 /**
@@ -31,6 +33,7 @@ export default function DrinkEditScreen() {
   const existingDrink = id ? drinks.find((d) => d.id === id) : undefined;
   
   const form = useDrinkForm(existingDrink);
+  const toast = useToast();
   const [ingredientName, setIngredientName] = useState('');
   const [ingredientQuantity, setIngredientQuantity] = useState('');
   const [ingredientUnit, setIngredientUnit] = useState('ml');
@@ -118,12 +121,12 @@ export default function DrinkEditScreen() {
   // Salva as alterações
   const handleSave = async () => {
     if (!form.validate()) {
-      Alert.alert('Campos obrigatórios', 'Preencha todos os campos obrigatórios');
+      toast.showError('Preencha todos os campos obrigatórios');
       return;
     }
 
     if (!id) {
-      Alert.alert('Erro', 'ID do drink não encontrado');
+      toast.showError('ID do drink não encontrado');
       return;
     }
 
@@ -131,10 +134,13 @@ export default function DrinkEditScreen() {
       const drinkData = form.getDrinkData(id);
       console.log('[DrinkEditScreen] Atualizando drink:', drinkData.id);
       await updateExistingDrink(drinkData);
-      router.back();
+      toast.showSuccess('Drink atualizado com sucesso!');
+      setTimeout(() => {
+        router.back();
+      }, 500);
     } catch (error) {
       console.error('[DrinkEditScreen] Erro ao salvar:', error);
-      Alert.alert('Erro', 'Não foi possível salvar as alterações');
+      toast.showError('Não foi possível salvar as alterações');
     }
   };
 
@@ -298,6 +304,14 @@ export default function DrinkEditScreen() {
           />
         </View>
       </View>
+
+      {/* Toast para feedback */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onHide={toast.hide}
+      />
     </ScrollView>
   );
 }

@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Drink } from '@/model/Drink';
 import { initialDrinks } from './initialData';
 import { parseDate } from '@/utils/dateFormat';
+import { isSupabaseConfigured } from '@/lib/supabase';
+import * as SupabaseRepository from './repository.supabase';
 
 const STORAGE_KEY = '@drinks_da_giovana:drinks';
 
@@ -27,11 +29,17 @@ const deserializeDrink = (json: string): Drink => {
 };
 
 /**
- * Carrega todos os drinks do armazenamento local
- * Se não houver drinks salvos, retorna os dados iniciais
+ * Carrega todos os drinks
+ * Usa Supabase se configurado, caso contrário usa AsyncStorage
  * @returns Array de drinks
  */
 export const loadDrinks = async (): Promise<Drink[]> => {
+  // Se Supabase estiver configurado, usa ele
+  if (isSupabaseConfigured) {
+    return SupabaseRepository.loadDrinks();
+  }
+  
+  // Caso contrário, usa AsyncStorage (fallback)
   try {
     console.log('[DrinkRepository] Carregando drinks do armazenamento...');
     
@@ -82,10 +90,16 @@ export const saveAllDrinks = async (drinks: Drink[]): Promise<void> => {
 };
 
 /**
- * Adiciona um novo drink ao armazenamento
+ * Adiciona um novo drink
+ * Usa Supabase se configurado, caso contrário usa AsyncStorage
  * @param drink - Drink a ser adicionado
  */
 export const addDrink = async (drink: Drink): Promise<void> => {
+  if (isSupabaseConfigured) {
+    return SupabaseRepository.addDrink(drink);
+  }
+  
+  // Fallback para AsyncStorage
   try {
     console.log('[DrinkRepository] Adicionando drink:', { id: drink.id, name: drink.name });
     
@@ -101,10 +115,16 @@ export const addDrink = async (drink: Drink): Promise<void> => {
 };
 
 /**
- * Atualiza um drink existente no armazenamento
+ * Atualiza um drink existente
+ * Usa Supabase se configurado, caso contrário usa AsyncStorage
  * @param updatedDrink - Drink com os dados atualizados
  */
 export const updateDrink = async (updatedDrink: Drink): Promise<void> => {
+  if (isSupabaseConfigured) {
+    return SupabaseRepository.updateDrink(updatedDrink);
+  }
+  
+  // Fallback para AsyncStorage
   try {
     console.log('[DrinkRepository] Atualizando drink:', { id: updatedDrink.id, name: updatedDrink.name });
     
@@ -122,10 +142,16 @@ export const updateDrink = async (updatedDrink: Drink): Promise<void> => {
 };
 
 /**
- * Remove um drink do armazenamento
+ * Remove um drink
+ * Usa Supabase se configurado, caso contrário usa AsyncStorage
  * @param drinkId - ID do drink a ser removido
  */
 export const deleteDrink = async (drinkId: string): Promise<void> => {
+  if (isSupabaseConfigured) {
+    return SupabaseRepository.deleteDrink(drinkId);
+  }
+  
+  // Fallback para AsyncStorage
   try {
     console.log('[DrinkRepository] Removendo drink:', drinkId);
     

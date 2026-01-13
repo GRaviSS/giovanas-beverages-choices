@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Animated } from 'react-native';
 import { Drink } from '@/model/Drink';
 import { StarRating } from './StarRating';
 import { formatDate } from '@/utils/dateFormat';
@@ -18,12 +18,35 @@ interface DrinkCardProps {
  * Mostra miniatura, nome, nota e data
  */
 export const DrinkCard: React.FC<DrinkCardProps> = ({ drink, onPress }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.97,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 10,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 300,
+      friction: 10,
+    }).start();
+  };
+
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
+      >
       {/* Miniatura da foto */}
       {drink.photo ? (
         <Image source={{ uri: drink.photo }} style={styles.thumbnail} />
@@ -46,7 +69,8 @@ export const DrinkCard: React.FC<DrinkCardProps> = ({ drink, onPress }) => {
 
       {/* Ícone de seta */}
       <Text style={styles.arrow}>›</Text>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
@@ -55,50 +79,58 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.background,
-    borderRadius: 12,
-    padding: 12,
-    marginVertical: 6,
+    borderRadius: 16,
+    padding: 16,
+    marginVertical: 8,
     marginHorizontal: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   thumbnail: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    marginRight: 12,
+    width: 70,
+    height: 70,
+    borderRadius: 12,
+    marginRight: 16,
+    backgroundColor: Colors.backgroundLight,
   },
   thumbnailPlaceholder: {
     backgroundColor: Colors.backgroundLight,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   placeholderText: {
-    fontSize: 24,
+    fontSize: 28,
   },
   info: {
     flex: 1,
   },
   name: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 19,
+    fontWeight: '700',
     color: Colors.textPrimary,
-    marginBottom: 4,
+    marginBottom: 6,
+    letterSpacing: 0.3,
   },
   ratingContainer: {
-    marginBottom: 4,
+    marginBottom: 6,
   },
   date: {
     fontSize: 14,
     color: Colors.textSecondary,
+    fontWeight: '500',
   },
   arrow: {
-    fontSize: 24,
-    color: Colors.textSecondary,
-    marginLeft: 8,
+    fontSize: 28,
+    color: Colors.primary,
+    marginLeft: 12,
+    fontWeight: '300',
   },
 });
 
